@@ -48,7 +48,7 @@ print(m3 / 2)
 
 print(2 / m3)
 
-# m1 * m2
+print(m1 * m2)
 # # Output:
 # Matrix([[28., 34.], [56., 68.]])
 

@@ -68,6 +68,25 @@ class Matrix:
     def __rtruediv__(self, var):
         return self.__truediv__(var)
 
+    def __mul__(self, var):
+        ret = []
+        if isinstance(var, int) or isinstance(var, float):
+            print("int or float")
+        elif isinstance(var, Vector):
+            print("Vector")
+        elif isinstance(var, Matrix):
+            print("Matrix")
+            for i in range(0, self.shape[0]):
+                ret.append([a * var for a in self.data[i]])
+            return Matrix(ret)
+
+        return
+
+    # def __rmul__(self, var):
+
+    # def __str__(self, var):
+
+    # def __repr(self, var):
 
     # ref: https://stackoverflow.com/questions/21444338/transpose-nested-list-in-python
     def T(self):
@@ -76,7 +95,7 @@ class Matrix:
 
 
 
-class Vector:
+class Vector(Matrix):
 
     def __init__(self, values):
         # a list of a list of floats: Vector([[0.0, 1.0, 2.0, 3.0]]),
