@@ -21,9 +21,59 @@ class Matrix:
     def __str__(self):
         return "Matrix(" + str(self.data) + ")"
 
+    def __add__(self, other):
+        if not isinstance(other, Matrix):
+            raise TypeError("only matrix can add to each other")
+        if (self.shape != other.shape):
+            raise ValueError("only matrix of same shape is allowed")
+
+        tmp = []
+        print(self.data[0] + other.data[0], self.shape[0])
+        for i in range(0, self.shape[0]):
+            tmp.append([a + b for a, b in zip(self.data[i], other.data[i])])
+        return Matrix(tmp)
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __sub__(self, other):
+        if not isinstance(other, Matrix):
+            raise TypeError("only matrix can subtract from each other")
+        if self.shape != other.shape:
+            raise ValueError("only matrix of same shape is allowed")
+
+        tmp = []
+        for i in range(0, self.shape[0]):
+            print(self.data[i], other.data[i])
+            tmp.append([a - b for a, b in zip(self.data[i], other.data[i])])
+
+        return Matrix(tmp)
+
+    def __rsub__(self, other):
+        return other - self
+
+    def __truediv__(self, var):
+        if isinstance(var, Vector):
+            raise NotImplementedError(
+                "Division of a Vector by a Vector is not implemented here.")
+        if not any([isinstance(var, t) for t in [float, int, complex]]):
+            raise ValueError("division only accepts scalar. (real number)")
+        tmp = []
+        for i in range(0, self.shape[0]):
+            # print(self.data[i], other.data[i])
+            tmp.append([a / var for a in self.data[i]])
+
+        return Matrix(tmp)
+
+    def __rtruediv__(self, var):
+        return self.__truediv__(var)
+
+
     # ref: https://stackoverflow.com/questions/21444338/transpose-nested-list-in-python
     def T(self):
         return Matrix(list(map(list, zip(*self.data))))
+
+
 
 
 class Vector:
