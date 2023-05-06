@@ -15,9 +15,11 @@ def simple_predict(x, theta):
     This function should not raise any Exception.
     """
     # TODO empty check
-    # TODO dimension checks
-    # if not (len(theta) == 2):
-        # return None
+    if x is None or theta is None:
+        return None
+    # Check if x and theta have the correct dimensions
+    if x.ndim != 1 or len(x) == 0 or len(theta) != 2:
+        return None
     new = np.zeros(shape=x.shape)
     for i, item in enumerate(x):
         new[i] = theta[0] + theta[1] * item
