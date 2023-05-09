@@ -55,7 +55,7 @@ class Matrix:
     def __truediv__(self, var):
         if isinstance(var, Vector):
             raise NotImplementedError(
-                "Division of a Vector by a Vector is not implemented here.")
+                "Division of a Matrix by a Matrix is not implemented here.")
         if not any([isinstance(var, t) for t in [float, int, complex]]):
             raise ValueError("division only accepts scalar. (real number)")
         tmp = []
@@ -75,12 +75,19 @@ class Matrix:
         elif isinstance(var, Vector):
             print("Vector")
         elif isinstance(var, Matrix):
-            print("Matrix")
-            for i in range(0, self.shape[0]):
-                ret.append([a * var for a in self.data[i]])
-            return Matrix(ret)
+            print(self.shape[1], var.shape[0])
+            if self.shape[1] != var.shape[0]:
+                raise ValueError("Matrices cannot be multiplied")
+            result_data = [[0] * var.shape[1] for _ in range(self.shape[0])]
+            result_matrix = Matrix(result_data)
+            for i in range(self.shape[0]):
+                for j in range(var.shape[1]):
+                    # multiply the corresponding elements from each row and column together and add them up
+                    for k in range(self.shape[1]):
+                        result_matrix.data[i][j] += self.data[i][k] * \
+                            var.data[k][j]
 
-        return
+        return result_matrix
 
     # def __rmul__(self, var):
 
@@ -91,8 +98,6 @@ class Matrix:
     # ref: https://stackoverflow.com/questions/21444338/transpose-nested-list-in-python
     def T(self):
         return Matrix(list(map(list, zip(*self.data))))
-
-
 
 
 class Vector(Matrix):
