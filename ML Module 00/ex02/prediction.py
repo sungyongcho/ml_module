@@ -30,14 +30,14 @@ def simple_predict(x, theta):
 if __name__ == "__main__":
     x = np.arange(1, 6)
     # Example 1:
-    theta1 = np.array([5, 0])
+    theta1 = np.array([1, 1])
     print(simple_predict(x, theta1))
     # # Ouput:
     # array([5., 5., 5., 5., 5.])
     # # Do you understand why y_hat contains only 5’s here?
 
     # Example 2:
-    theta2 = np.array([0, 1])
+    theta2 = np.array([1, 1])
     print(simple_predict(x, theta2))
     # # Output:
     # array([1., 2., 3., 4., 5.])

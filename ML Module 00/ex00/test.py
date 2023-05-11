@@ -16,13 +16,13 @@ def pdf():
     # # Output
     # (2, 3)
     m1 = Matrix([[0., 2., 4.], [1., 3., 5.]])
-    m1.shape
+    print(m1.shape)
     # # Output:
     # (2, 3)
-    m1.T()
+    print(m1.T())
     # # Output:
     # Matrix([[0.0, 1.0], [2.0, 3.0], [4.0, 5.0]])
-    m1.T().shape
+    print(m1.T().shape)
     # # Output:
     # (3, 2)
     m1 = Matrix([[0.0, 1.0, 2.0, 3.0], [0.0, 2.0, 4.0, 6.0]])

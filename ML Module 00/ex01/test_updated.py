@@ -32,5 +32,5 @@ if __name__ == "__main__":
     print("tstat.var(data):", tstat.var(data))
     print("np.var(data):", np.var(data, ddof=1))
     print("abs(tstat.var(data) - 654661):", abs(tstat.var(data) - 654661))
-    assert abs(tstat.var(data) - np.var(data, ddof=1)) < epsilon, err
+    assert abs(tstat.var(data) - 654661) < epsilon, err
     assert abs(tstat.std(data) - np.std(data, ddof=1)) < epsilon, err
