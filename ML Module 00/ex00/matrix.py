@@ -1,3 +1,12 @@
+
+import operator
+
+ops = {"+": operator.add,
+       "-": operator.sub,
+       "*": operator.mul,
+       "/": operator.truediv}
+
+
 class Matrix:
 
     def __init__(self, arg) -> None:
@@ -19,7 +28,10 @@ class Matrix:
             return
 
     def __str__(self):
-        return "Matrix(" + str(self.data) + ")"
+        return f"Matrix({self.data})"
+
+    def __repr__(self):
+        return f"Matrix({self.data})"
 
     def __add__(self, other):
         if not isinstance(other, Matrix):
@@ -28,13 +40,17 @@ class Matrix:
             raise ValueError("only matrix of same shape is allowed")
 
         tmp = []
-        print(self.data[0] + other.data[0], self.shape[0])
+        # print(self.data[0] + other.data[0], self.shape[0])
         for i in range(0, self.shape[0]):
             tmp.append([a + b for a, b in zip(self.data[i], other.data[i])])
         return Matrix(tmp)
 
     def __radd__(self, other):
-        return self.__add__(other)
+        if not isinstance(other, Matrix):
+            raise TypeError("only matrix can add to each other")
+        if (self.shape != other.shape):
+            raise ValueError("only matrix of same shape is allowed")
+        return other + self
 
     def __sub__(self, other):
         if not isinstance(other, Matrix):
@@ -44,12 +60,16 @@ class Matrix:
 
         tmp = []
         for i in range(0, self.shape[0]):
-            print(self.data[i], other.data[i])
+            # print(self.data[i], other.data[i])
             tmp.append([a - b for a, b in zip(self.data[i], other.data[i])])
 
         return Matrix(tmp)
 
     def __rsub__(self, other):
+        if not isinstance(other, Matrix):
+            raise TypeError("only matrix can subtract from each other")
+        if self.shape != other.shape:
+            raise ValueError("only matrix of same shape is allowed")
         return other - self
 
     def __truediv__(self, var):
@@ -58,130 +78,130 @@ class Matrix:
                 "Division of a Matrix by a Matrix is not implemented here.")
         if not any([isinstance(var, t) for t in [float, int, complex]]):
             raise ValueError("division only accepts scalar. (real number)")
+        if var == 0:
+            raise ValueError("Division of 0 not allowed.")
         tmp = []
         for i in range(0, self.shape[0]):
             # print(self.data[i], other.data[i])
             tmp.append([a / var for a in self.data[i]])
-
         return Matrix(tmp)
 
     def __rtruediv__(self, var):
-        return self.__truediv__(var)
+        raise NotImplementedError("rtruediv not implemented")
 
     def __mul__(self, var):
-        ret = []
-        if isinstance(var, int) or isinstance(var, float):
-            print("int or float")
+        # print(type(var))
+        if any(isinstance(var, scalar_type) for scalar_type in [int, float, complex]):
+            result = [[self.data[i][j] *
+                       var for j in range(self.shape[1])] for i in range(self.shape[0])]
+            return Matrix(result)
         elif isinstance(var, Vector):
-            print("Vector")
-        elif isinstance(var, Matrix):
-            print(self.shape[1], var.shape[0])
             if self.shape[1] != var.shape[0]:
-                raise ValueError("Matrices cannot be multiplied")
-            result_data = [[0] * var.shape[1] for _ in range(self.shape[0])]
-            result_matrix = Matrix(result_data)
-            for i in range(self.shape[0]):
-                for j in range(var.shape[1]):
-                    # multiply the corresponding elements from each row and column together and add them up
-                    for k in range(self.shape[1]):
-                        result_matrix.data[i][j] += self.data[i][k] * \
-                            var.data[k][j]
+                raise ValueError(
+                    "Matrices cannot be multiplied, dimensions don't match.")
+            result = [[sum([self.data[i][k] * var.data[k][j] for k in range(self.shape[1])])
+                       for j in range(var.shape[1])] for i in range(self.shape[0])]
+            return Vector(result)
+        elif isinstance(var, Matrix):
+            # print("b", self.shape[1], var.shape[0])
+            if self.shape[1] != var.shape[0]:
+                raise ValueError(
+                    "Matrices cannot be multiplied, dimensions don't match.")
+            result = [[sum([self.data[i][k] * var.data[k][j] for k in range(self.shape[1])])
+                       for j in range(var.shape[1])] for i in range(self.shape[0])]
+            return Matrix(result)
+        else:
+            raise TypeError("Invalid type of input value.")
 
-        return result_matrix
-
-    # def __rmul__(self, var):
-
-    # def __str__(self, var):
-
-    # def __repr(self, var):
+    def __rmul__(self, x):
+        return self * x
 
     # ref: https://stackoverflow.com/questions/21444338/transpose-nested-list-in-python
+
     def T(self):
         return Matrix(list(map(list, zip(*self.data))))
 
 
 class Vector(Matrix):
 
-    def __init__(self, values):
+    def __init__(self, data):
         # a list of a list of floats: Vector([[0.0, 1.0, 2.0, 3.0]]),
         # • a list of lists of single float: Vector([[0.0], [1.0], [2.0], [3.0]]),
         # • a size: Vector(3) -> the vector will have values = [[0.0], [1.0], [2.0]],
         # • a range: Vector((10,16)) -> the vector will have values = [[10.0], [11.0],
         #            [12.0], [13.0], [14.0], [15.0]]. in Vector((a,b)), if a > b, you must display accurate error message
         ##
-        if (isinstance(values, int)):
-            if (values < 0):
+        if (isinstance(data, int)):
+            if (data < 0):
                 raise ValueError(
                     "Vector must be initialized with appropriate data (int, negative)")
-            self.values = []
-            for i in range(values):
-                self.values.append([float(i)])
-        elif (isinstance(values, tuple)):
-            if not (len(values) == 2):
+            self.data = []
+            for i in range(data):
+                self.data.append([float(i)])
+        elif (isinstance(data, tuple)):
+            if not (len(data) == 2):
                 raise ValueError(
                     "Vector must be initialized with appropriate data (tuple, length)")
-            if not (isinstance(values[0], int) and isinstance(values[1], int)):
+            if not (isinstance(data[0], int) and isinstance(data[1], int)):
                 raise ValueError(
                     "Vector must be initialized with appropriate data (tuple, data type)")
-            if not (values[0] < values[1]):
+            if not (data[0] < data[1]):
                 raise ValueError(
                     "Vector must be initialized with appropriate data (tuple, range)")
-            self.values = []
-            for i in range(values[0], values[1]):
-                self.values.append([float(i)])
-        # elif not (any(isinstance(i, list) for i in values) and isinstance(values, list)):
+            self.data = []
+            for i in range(data[0], data[1]):
+                self.data.append([float(i)])
+        # elif not (any(isinstance(i, list) for i in data) and isinstance(data, list)):
             # raise TypeError("vector must be initialized with appropriate data")
         else:
-            for list_inside in values:
-                if isinstance(list_inside, list):
-                    for j in list_inside:
-                        if not (isinstance(j, float)):
-                            raise TypeError(
-                                "The element must be float type")
-                else:
-                    if not (isinstance(list_inside, float)):
-                        raise TypeError("The element must be float type")
+            # for list_inside in data:
+            #     if isinstance(list_inside, list):
+            #         for j in list_inside:
+            #             if not (isinstance(j, float)):
+            #                 raise TypeError(
+            #                     "The element must be float type")
+            #     else:
+            #         if not (isinstance(list_inside, float)):
+            #             raise TypeError("The element must be float type")
 
-            self.values = values
+            self.data = data
 
-        if len(self.values) == 1:
-            # print(len(values[0]))
-            self.shape = (1, len(self.values[0]))
+        if len(self.data) == 1:
+            # print(len(data[0]))
+            self.shape = (1, len(self.data[0]))
         else:
-            # print(len(values))
-            self.shape = (len(self.values), 1)
+            # print(len(data))
+            self.shape = (len(self.data), 1)
 
-    def _dot_row(self, vector):
-        output = 0
-        for i in range(0, max(self.shape)):
-            output += (self.values[0][i] * vector.values[0][i])
-        return output
+    def __str__(self):
+        return f"Vector({self.data})"
 
-    def _dot_column(self, vector):
-        output = 0
-        for i in range(0, max(self.shape)):
-            output += (self.values[i][0] * vector.values[i][0])
-        return output
+    def __repr__(self):
+        return f"Vector({self.data})"
 
-    def dot(self, vector):
-        if (self.shape != vector.shape):
-            raise ValueError("the shape must be the same")
-        dimension_check = self.shape.index(max(self.shape))
-        if dimension_check == 1:
-            return self._dot_row(vector)
-        else:
-            return self._dot_column(vector)
+    def dot(self, other):
+        if not isinstance(other, Vector):
+            raise TypeError(
+                "unsupported operand type(s) for +: '{}' and '{}'".format(type(self), type(other)))
+        if self.shape[1] != other.shape[0]:
+            raise TypeError(
+                "Invalid input: dot product requires a Vector of compatible shape.")
+        result = 0.0
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                result += self.data[i][j] * other.data[j][i]
+        return result
 
     def _T_row_to_col(self):
         tmp = []
         for i in range(0, max(self.shape)):
-            tmp.append([self.values[0][i]])
+            tmp.append([self.data[0][i]])
         return Vector(tmp)
 
     def _T_col_to_row(self):
         tmp = []
         for i in range(0, max(self.shape)):
-            tmp.append(self.values[i][0])
+            tmp.append(self.data[i][0])
         return Vector([tmp])
 
     def T(self):
@@ -202,11 +222,11 @@ class Vector(Matrix):
         tmp = []
         if dimension_check == 1:
             for i in range(0, max(self.shape)):
-                tmp.append(self.values[0][i] + other.values[0][i])
+                tmp.append(self.data[0][i] + other.data[0][i])
             return Vector([tmp])
         else:
             for i in range(0, max(self.shape)):
-                tmp.append([self.values[i][0] + other.values[i][0]])
+                tmp.append([self.data[i][0] + other.data[i][0]])
             return Vector(tmp)
 
     def __radd__(self, other):
@@ -221,11 +241,11 @@ class Vector(Matrix):
         tmp = []
         if dimension_check == 1:
             for i in range(0, max(self.shape)):
-                tmp.append(self.values[0][i] - other.values[0][i])
+                tmp.append(self.data[0][i] - other.data[0][i])
             return Vector([tmp])
         else:
             for i in range(0, max(self.shape)):
-                tmp.append([self.values[i][0] - other.values[i][0]])
+                tmp.append([self.data[i][0] - other.data[i][0]])
             return Vector(tmp)
 
     def __rsub__(self, other):
@@ -234,19 +254,19 @@ class Vector(Matrix):
     def __row_loop(self, var, operator):
         tmp = []
         for i in range(0, max(self.shape)):
-            tmp.append(ops[operator](self.values[0][i], var))
+            tmp.append(ops[operator](self.data[0][i], var))
         return Vector([tmp])
 
     def __col_loop(self, var, operator):
         tmp = []
         for i in range(0, max(self.shape)):
-            tmp.append([ops[operator](self.values[i][0], var)])
+            tmp.append([ops[operator](self.data[i][0], var)])
         return Vector(tmp)
 
     def col_loop(self, other, operator):
         tmp = []
         for i in range(0, max(self.shape)):
-            tmp.append([ops[operator](self.values[0][i], other.values[0][i])])
+            tmp.append([ops[operator](self.data[0][i], other.data[0][i])])
         return Vector([tmp])
 
     def __truediv__(self, var):
@@ -265,24 +285,24 @@ class Vector(Matrix):
         raise NotImplementedError(
             "Division of a scalar by a Vector is not implemented here.")
 
-    def __mul__(self, var):
-        if isinstance(var, Vector):
-            raise NotImplementedError(
-                "Multiplication of a Vector by a Vector is not implemented here.")
-        if not any([isinstance(var, t) for t in [float, int, complex]]):
-            raise ValueError(
-                "multiplication only accepts scalar. (real number)")
-        dimension_check = self.shape.index(max(self.shape))
-        if dimension_check == 1:
-            return self.__row_loop(var, "*")
+    def __mul__(self, other):
+        if any(isinstance(other, scalar_type) for scalar_type in [int, float, complex]):
+            result = [
+                [self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
+            return Vector(result)
+        elif isinstance(other, Vector):
+            if self.shape[1] != other.shape[0]:
+                raise ValueError(
+                    "Vectors cannot be multiplied, dimensions don't match.")
+            result = [
+                [self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
+            return Vector(result)
+        elif isinstance(other, Matrix):
+            if self.shape[1] != other.shape[0]:
+                raise ValueError(
+                    "Matrices cannot be multiplied, dimensions don't match.")
+            result = [[sum([self.data[i][k] * other.data[k][j] for k in range(self.shape[1])])
+                       for j in range(other.shape[1])] for i in range(self.shape[0])]
+            return Matrix(result)
         else:
-            return self.__col_loop(var, "*")
-
-    def __rmul__(self, var):
-        return self * var
-
-    def __str__(self):
-        return str(self.values)
-
-    def __repr__(self):
-        return str(self.values)
+            raise TypeError("Invalid type of input value.")
