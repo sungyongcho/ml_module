@@ -16,25 +16,19 @@ def plot(x, y, theta):
     Raises:
     This function should not raise any Exceptions.
     """
+    if not isinstance(x, np.ndarray) or not isinstance(y, np.ndarray) or not isinstance(theta, np.ndarray):
+        return None
 
-    # if not isinstance(x, np.ndarray) or not isinstance(y, np.ndarray) or not isinstance(theta, np.ndarray):
-    #     return None
+    if x.size == 0 or y.size == 0 or theta.size == 0:
+        return None
 
-    # if x.size == 0 or y.size == 0 or theta.size == 0:
-    #     return None
+    if x.shape[0] != y.shape[0] or theta.shape != (2, 1):
+        return None
 
-    # if x.shape[0] != y.shape[0] or theta.shape != (2,):
-    #     return None
-
-    X = add_intercept(x)
-    y_hat = np.dot(X, theta)
+    y_hat = predict_(x, theta)
 
     plt.scatter(x, y)
     plt.plot(x, y_hat, color='orange')
-    # plt.xlabel('X')
-    # plt.ylabel('Y')
-    # plt.grid()
-    plt.title('Linear Regression')
     plt.show()
 
 

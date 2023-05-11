@@ -1,20 +1,21 @@
 import numpy as np
 
+
 def simple_predict(x, theta):
-    """Computes the vector of prediction y_hat from two non-empty numpy.ndarray.
+    """
+    Computes the vector of prediction y_hat from two non-empty numpy.ndarray.
+
     Args:
     x: has to be an numpy.ndarray, a vector of dimension m * 1.
     theta: has to be an numpy.ndarray, a vector of dimension 2 * 1.
-    if (x == None || theta == None):
-        return None
+
     Returns:
     y_hat as a numpy.ndarray, a vector of dimension m * 1.
-    None if x or theta are empty numpy.ndarray.
-    None if x or theta dimensions are not appropriate.
+    None if x or theta are empty numpy.ndarray or if x or theta dimensions are not appropriate.
+
     Raises:
     This function should not raise any Exception.
     """
-    # TODO empty check
     if x is None or theta is None:
         return None
     # Check if x and theta have the correct dimensions
@@ -25,8 +26,9 @@ def simple_predict(x, theta):
         new[i] = theta[0] + theta[1] * item
     return new
 
+
 if __name__ == "__main__":
-    x = np.arange(1,6)
+    x = np.arange(1, 6)
     # Example 1:
     theta1 = np.array([5, 0])
     print(simple_predict(x, theta1))

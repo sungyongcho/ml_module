@@ -52,14 +52,12 @@ class TinyStatistician(object):
         return d0 + d1
 
     def var(self, x):
-        if not isinstance(x, list) or len(x) == 0:
+        if not x:
             return None
-        mean = self.mean(x)
-        suqared_diff_sum = 0.0
-        for num in x:
-            suqared_diff_sum += (num - mean) ** 2
-        #suqared_diff_sum = np.sum((num - mean) ** 2)
-        return suqared_diff_sum / (len(x) - 1)
+        n = len(x)
+        mean = sum(x) / n
+        variance = sum((xi - mean) ** 2 for xi in x) / (n - 1)
+        return variance
 
     def std(self, x):
         return math.sqrt(self.var(x))

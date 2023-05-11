@@ -41,8 +41,9 @@ def mse_(y, y_hat):
     Raises:
     This function should not raise any Exceptions.
     """
+    if len(y) != len(y_hat):
+        return None
     a = mse_elem(y, y_hat)
-
     return np.sum(a)/len(a)
 
 
@@ -59,8 +60,9 @@ def rmse_(y, y_hat):
     Raises:
     This function should not raise any Exceptions.
     """
+    if len(y) != len(y_hat):
+        return None
     a = rmse_elem(y, y_hat)
-
     return sqrt(np.sum(a)/len(a))
 
 
@@ -77,6 +79,8 @@ def mae_(y, y_hat):
     Raises:
     This function should not raise any Exceptions.
     """
+    if len(y) != len(y_hat):
+        return None
     a = mae_elem(y, y_hat)
     return (np.sum(a)/len(a))
 
@@ -94,7 +98,8 @@ def r2score_(y, y_hat):
     Raises:
     This function should not raise any Exceptions.
     """
-
+    if len(y) != len(y_hat):
+        return None
     ssr = np.sum(r2score_elem_ssr(y, y_hat))
     sst = np.sum(r2score_elem_sst(y))
     return 1 - (ssr / sst)

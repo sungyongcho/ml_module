@@ -14,7 +14,8 @@ def loss_(y, y_hat):
     Raises:
     This function should not raise any Exceptions.
     """
-
+    if y.size == 0 or y_hat.size == 0 or y.shape != y_hat.shape:
+        return None
     return np.sum((y_hat - y) ** 2) / (2 * len(y))
 
 

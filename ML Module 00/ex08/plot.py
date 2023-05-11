@@ -16,6 +16,16 @@ def plot_with_loss(x, y, theta):
     Raises:
     This function should not raise any Exception.
     """
+    # Check if the inputs are numpy arrays and non-empty
+    if not isinstance(x, np.ndarray) or not isinstance(y, np.ndarray) or not isinstance(theta, np.ndarray):
+        return None
+
+    if x.size == 0 or y.size == 0 or theta.size == 0:
+        return None
+
+    # Check if the shapes of x, y, and theta are correct
+    if x.shape[0] != y.shape[0] or theta.shape != (2,):
+        return None
 
     X = add_intercept(x)
 

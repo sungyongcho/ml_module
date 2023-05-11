@@ -16,18 +16,16 @@ def predict_(x, theta):
     Raises:
     This function should not raise any Exceptions.
     """
+
     if not isinstance(x, np.ndarray) or not isinstance(theta, np.ndarray):
         return None
 
-    # if x.size == 0 or theta.size == 0:
-    #     return None
+    if x.ndim != 1 or x.size == 0 or theta.shape != (2, 1):
+        return None
 
-    # if x.shape[0] != theta.size:
-    #     return None
-
-    X = add_intercept(x)
+    X = np.column_stack((np.ones(len(x)), x))
     y_hat = np.dot(X, theta)
-    # print(X)
+
     return y_hat
 
 

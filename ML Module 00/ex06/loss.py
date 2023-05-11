@@ -46,8 +46,9 @@ if __name__ == "__main__":
     theta1 = np.array([[2.], [4.]])
     y_hat1 = predict_(x1, theta1)
     y1 = np.array([[2.], [7.], [12.], [17.], [22.]])
-
     print(loss_elem_(y1, y_hat1))
+    # Output:
+    # array([[0.], [1], [4], [9], [16]])
 
     # Example 2:
     print(loss_(y1, y_hat1))
