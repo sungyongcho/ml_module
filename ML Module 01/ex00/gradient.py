@@ -16,6 +16,25 @@ def simple_gradient(x, y, theta):
     Raises:
     This function should not raise any Exception.
     """
+    if type(x) != np.ndarray or type(y) != np.ndarray or type(theta) != np.ndarray:
+        return None
+    if x.size == 0 or y.size == 0 or theta.size == 0:
+        return None
+    if x.shape[0] != y.shape[0] or theta.shape != (2, 1):
+        return None
+
+    m = x.shape[0]
+    gradient = np.zeros((2, 1))
+
+    for i in range(m):
+        xi = np.vstack((1, x[i])).reshape(2, 1).astype(float)
+        yi = y[i]
+        hypothesis = np.dot(theta.T, xi)[0, 0]
+        gradient += (hypothesis - yi) * xi
+
+    gradient /= m
+
+    return gradient
 
 
 if __name__ == "__main__":
