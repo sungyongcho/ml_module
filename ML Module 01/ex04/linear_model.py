@@ -6,7 +6,7 @@ from my_linear_regression import MyLinearRegression as MyLR
 
 if __name__ == "__main__":
     data = pd.read_csv(
-        '/Users/wwaya/Documents/ml_module/ML Module 01/data/are_blue_pills_magics.csv')
+        './are_blue_pills_magics.csv')
     Xpill = np.array(data['Micrograms']).reshape(-1, 1)
     Yscore = np.array(data['Score']).reshape(-1, 1)
     linear_model1 = MyLR(np.array([[89.0], [-8]]))
@@ -32,3 +32,6 @@ if __name__ == "__main__":
     # 232.16344285714285
     print(mean_squared_error(Yscore, Y_model2))
     # 232.16344285714285
+
+    linear_model1.plot_regression(Xpill, Yscore, Y_model1)
+    linear_model1.plot_cost(Xpill, Yscore)
