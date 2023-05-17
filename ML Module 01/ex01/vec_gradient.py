@@ -28,6 +28,50 @@ def simple_gradient(x, y, theta):
     return gradient
 
 
+def eval():
+    print("==========eval========")
+    n = 100
+    x = np.array(range(1, n+1)).reshape(-1, 1)
+    y = 1.25*x
+    theta = np.array([[1.], [1.]])
+    print(simple_gradient(x, y, theta))
+
+    n = 1000
+    x = np.array(range(1, n+1)).reshape(-1, 1)
+    y = 1.25*x
+    theta = np.array([[1.], [1.]])
+    print(simple_gradient(x, y, theta))
+
+    n = 10000
+    x = np.array(range(1, n+1)).reshape(-1, 1)
+    y = 1.25*x
+    theta = np.array([[1.], [1.]])
+    print(simple_gradient(x, y, theta))
+    print("========================")
+
+
+def eval2():
+    print("==========eval2========")
+    n = 100
+    x = np.array(range(1, n+1)).reshape(-1, 1)
+    y = -0.75*x + 5
+    theta = np.array([[4.], [-1.]])
+    print(simple_gradient(x, y, theta))
+
+    n = 1000
+    x = np.array(range(1, n+1)).reshape(-1, 1)
+    y = -0.75*x + 5
+    theta = np.array([[4.], [-1.]])
+    print(simple_gradient(x, y, theta))
+
+    n = 10000
+    x = np.array(range(1, n+1)).reshape(-1, 1)
+    y = -0.75*x + 5
+    theta = np.array([[4.], [-1.]])
+    print(simple_gradient(x, y, theta))
+    print("========================")
+
+
 if __name__ == "__main__":
     x = np.array([12.4956442, 21.5007972, 31.5527382,
                  48.9145838, 57.5088733]).reshape((-1, 1))
@@ -43,3 +87,6 @@ if __name__ == "__main__":
     print(simple_gradient(x, y, theta2))
     # # Output:
     # array([[-57.8682...], [-2230.1229...]])
+
+    eval()
+    eval2()

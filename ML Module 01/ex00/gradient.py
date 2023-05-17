@@ -37,6 +37,17 @@ def simple_gradient(x, y, theta):
     return gradient
 
 
+def eval():
+    x = np.array(range(1, 11)).reshape(-1, 1)
+    y = 1.25 * x
+    theta = np.array([[1.], [1.]])
+    print(simple_gradient(x, y, theta))
+    theta = np.array([[1.], [-0.4]])
+    print(simple_gradient(x, y, theta))
+    theta = np.array([[0], [1.25]])
+    print(simple_gradient(x, y, theta))
+
+
 if __name__ == "__main__":
     x = np.array([12.4956442, 21.5007972, 31.5527382,
                  48.9145838, 57.5088733]).reshape((-1, 1))
@@ -52,3 +63,4 @@ if __name__ == "__main__":
     print(simple_gradient(x, y, theta2))
     # # Output:
     # array([[-57.86823748], [-2230.12297889]])
+    eval()
