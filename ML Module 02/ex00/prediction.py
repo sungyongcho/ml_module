@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def simple_predict(x, theta):
     """Computes the prediction vector y_hat from two non-empty numpy.array.
     Args:
@@ -13,29 +14,41 @@ def simple_predict(x, theta):
     Raises:
     This function should not raise any Exception.
     """
+    xp = np.hstack((np.ones((x.shape[0], 1)), x))
+    # print(xp)
+    # will print
+    # [[ 1.  1.  2.  3.]
+    # [ 1.  4.  5.  6.]
+    # [ 1.  7.  8.  9.]
+    # [ 1. 10. 11. 12.]]
+
+    ypred = np.zeros((x.shape[0], 1))
+    for ii in range(x.shape[0]):
+        ypred[ii] = np.dot(xp[ii], theta)
+    return ypred
 
 
 if __name__ == "__main__":
-    x = np.arange(1,13).reshape((4,-1))
+    x = np.arange(1, 13).reshape((4, -1))
     # Example 1:
     theta1 = np.array([5, 0, 0, 0]).reshape((-1, 1))
-    # simple_predict(x, theta1)
+    print(simple_predict(x, theta1))
     # # # Ouput:
     # # array([[5.], [5.], [5.], [5.]])
     # # # Do you understand why y_hat contains only 5’s here?
     # # Example 2:
-    # theta2 = np.array([0, 1, 0, 0]).reshape((-1, 1))
-    # simple_predict(x, theta2)
+    theta2 = np.array([0, 1, 0, 0]).reshape((-1, 1))
+    print(simple_predict(x, theta2))
     # # Output:
     # # array([[ 1.], [ 4.], [ 7.], [10.]])
     # # # Do you understand why y_hat == x[:,0] here?
-    # # Example 3:
-    # theta3 = np.array([-1.5, 0.6, 2.3, 1.98]).reshape((-1, 1))
-    # simple_predict(X, theta3)
+    # Example 3:
+    theta3 = np.array([-1.5, 0.6, 2.3, 1.98]).reshape((-1, 1))
+    print(simple_predict(x, theta3))
     # # # Output:
     # # array([[ 9.64], [24.28], [38.92], [53.56]])
     # # Example 4:
-    # theta4 = np.array([-3, 1, 2, 3.5]).reshape((-1, 1))
-    # simple_predict(x, theta4)
+    theta4 = np.array([-3, 1, 2, 3.5]).reshape((-1, 1))
+    print(simple_predict(x, theta4))
     # # # Output:
     # # array([[12.5], [32. ], [51.5], [71. ]])
