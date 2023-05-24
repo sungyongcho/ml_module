@@ -9,9 +9,14 @@ class MyLinearRegression():
     """
 
     def __init__(self, thetas, alpha=0.001, max_iter=1000):
+        if type(thetas) == 'tuple' and type(thetas) != 'float64':
+            thetas = thetas.astype('float64')
+        if type(thetas) != 'nummpy.ndarray':
+            thetas = np.array(thetas)
         self.alpha = alpha
         self.max_iter = max_iter
         self.thetas = thetas
+        print(type(self.thetas))
 
     def simple_gradient(self, x, y, theta):
         """Computes a gradient vector from three non-empty numpy.array, without any for loop.
@@ -92,12 +97,11 @@ class MyLinearRegression():
         Raises:
         This function should not raise any Exception.
         """
-
         m = len(y)  # Number of training examples
         n = x.shape[1]  # Number of features
 
-        # if (x.shape[0] != m) or (thetas_copy.shape[0] != (n + 1)):
-        #     return None
+        if (x.shape[0] != m) or (self.thetas.shape[0] != (n + 1)):
+            return None
         for i in range(self.max_iter):
             gradient_update = self.gradient(x, y)
             if gradient_update is None:
