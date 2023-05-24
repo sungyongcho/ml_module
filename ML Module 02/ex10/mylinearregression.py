@@ -99,21 +99,24 @@ class MyLinearRegression():
         # if x.ndim != 2 or y.ndim != 2 or y.shape[1] != 1:
         #     return None
 
+        # print(x.shape, y.shape)
+
         m = x.shape[0]  # Number of training examples
         n = x.shape[1]  # Number of features
 
-        # if y.shape[0] != m or self.thetas.shape[0] != (n + 1):
-        #     return None
-
         x_prime = np.concatenate((np.ones((m, 1)), x), axis=1)
+        self.thetas = np.zeros((n + 1, 1))  # Initialize thetas with correct number of features
+
+        print(x_prime.shape)
         for i in range(self.max_iter):
             gradient_update = self.gradient(x_prime, y)
+
             if gradient_update is None:
                 return None
-            self.thetas = self.thetas.astype(np.float64)
             self.thetas -= self.alpha * gradient_update
             if i % 10000 == 0:
                 print(i, "th:", self.thetas.flatten())
+
         return self.thetas
 
     def predict_(self, x):
