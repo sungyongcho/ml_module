@@ -2,7 +2,6 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 class MyLinearRegression():
     """
     Description:
@@ -51,7 +50,11 @@ class MyLinearRegression():
         theta: has to be an numpy.array, a vector (n +1) * 1.
 
         Return:
-        The gradient as a numpy.array, a vector of dimensions n * 1,
+        The gradient as a numpy.arra
+
+        print(x.shape, y.shape)
+    p    print()x_prinme.shape
+            ry, a vector of dimensions n * 1,
         containg the result of the formula for all j.
         None if x, y, or theta are empty numpy.array.
         None if x, y and theta do not have compatible dimensions.
@@ -72,6 +75,10 @@ class MyLinearRegression():
         gradient = (1/m) * np.dot(x_prime.T, diff)
 
         return gradient
+
+    def add_intercept(self, X):
+        intercept = np.ones((X.shape[0], 1))
+        return np.concatenate((intercept, X), axis=1)
 
     def fit_(self, x, y):
         """
@@ -101,21 +108,19 @@ class MyLinearRegression():
 
         # print(x.shape, y.shape)
 
-        m = x.shape[0]  # Number of training examples
-        n = x.shape[1]  # Number of features
+        x = self.add_intercept(x)
+        m = x.shape[0]
+        n = x.shape[1]
 
-        x_prime = np.concatenate((np.ones((m, 1)), x), axis=1)
-        self.thetas = np.zeros((n + 1, 1))  # Initialize thetas with correct number of features
-
-        print(x_prime.shape)
         for i in range(self.max_iter):
-            gradient_update = self.gradient(x_prime, y)
-
-            if gradient_update is None:
-                return None
-            self.thetas -= self.alpha * gradient_update
-            if i % 10000 == 0:
+            h = np.dot(x, self.thetas)
+            gradients = np.dot(x.T, (h - y)) / m
+            self.thetas -= self.alpha * gradients
+            if i % 100 == 0:
                 print(i, "th:", self.thetas.flatten())
+            if np.isnan(self.thetas).any():
+                print("NaN values encountered. Exiting the loop.")
+                break
 
         return self.thetas
 
