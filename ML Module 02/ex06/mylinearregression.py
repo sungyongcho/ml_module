@@ -10,9 +10,14 @@ class MyLinearRegression():
     """
 
     def __init__(self, thetas, alpha=0.001, max_iter=1000):
+        if type(thetas) == 'tuple' and type(thetas) != 'float64':
+            thetas = thetas.astype('float64')
+        if type(thetas) != 'nummpy.ndarray':
+            thetas = np.array(thetas)
         self.alpha = alpha
         self.max_iter = max_iter
         self.thetas = thetas
+        print(type(self.thetas))
 
     def simple_gradient(self, x, y, theta):
         """Computes a gradient vector from three non-empty numpy.array, without any for loop.
