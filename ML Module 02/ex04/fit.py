@@ -23,13 +23,13 @@ def fit_(x, y, theta, alpha, max_iter):
     Raises:
     This function should not raise any Exception.
     """
-
+    if (type(theta) != 'float64'):
+        theta = theta.astype('float64')
     m = len(y)  # Number of training examples
     n = x.shape[1]  # Number of features
 
     if (x.shape[0] != m) or (theta.shape[0] != (n + 1)):
         return None
-    print('working')
     for i in range(max_iter):
         gradient_update = gradient(x, y, theta)
         if gradient_update is None:
