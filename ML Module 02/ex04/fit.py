@@ -23,8 +23,10 @@ def fit_(x, y, theta, alpha, max_iter):
     Raises:
     This function should not raise any Exception.
     """
-    if (type(theta) != 'float64'):
-        theta = theta.astype('float64')
+    if type(thetas) == 'tuple' and type(thetas) != 'float64':
+        thetas = thetas.astype('float64')
+    if type(thetas) != 'nummpy.ndarray':
+        thetas = np.array(thetas)
     m = len(y)  # Number of training examples
     n = x.shape[1]  # Number of features
 
