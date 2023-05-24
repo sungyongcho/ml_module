@@ -93,18 +93,26 @@ class MyLinearRegression():
         Raises:
         This function should not raise any Exception.
         """
-        m = len(y)  # Number of training examples
+        # if not isinstance(x, np.ndarray) or not isinstance(y, np.ndarray):
+        #     return None
+
+        # if x.ndim != 2 or y.ndim != 2 or y.shape[1] != 1:
+        #     return None
+
+        m = x.shape[0]  # Number of training examples
         n = x.shape[1]  # Number of features
 
-        # if (x.shape[0] != m) or (self.the.shape[0] != (n + 1)):
+        # if y.shape[0] != m or self.thetas.shape[0] != (n + 1):
         #     return None
+
+        x_prime = np.concatenate((np.ones((m, 1)), x), axis=1)
         for i in range(self.max_iter):
-            gradient_update = self.gradient(x, y)
+            gradient_update = self.gradient(x_prime, y)
             if gradient_update is None:
                 return None
             self.thetas = self.thetas.astype(np.float64)
             self.thetas -= self.alpha * gradient_update
-            if (i % 10000 == 0):
+            if i % 10000 == 0:
                 print(i, "th:", self.thetas.flatten())
         return self.thetas
 
