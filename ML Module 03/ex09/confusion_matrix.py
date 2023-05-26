@@ -1,6 +1,8 @@
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
+# ref: https://towardsdatascience.com/understanding-the-confusion-matrix-and-how-to-implement-it-in-python-319202e0fe4d
+
 
 def confusion_matrix_(y_true, y_hat, labels=None):
     """
@@ -18,6 +20,22 @@ def confusion_matrix_(y_true, y_hat, labels=None):
     Raises:
     This function should not raise any Exception.
     """
+
+    if y_true.shape != y_hat.shape:
+        return None
+
+    # Get unique labels from y_true and y_hat
+    if labels is None:
+        labels = np.unique(np.concatenate((y_true, y_hat)))
+    print(labels)
+
+    # Calculate the confusion matrix
+    cm = np.zeros((len(labels), len(labels)), dtype=int)
+    for i, true_label in enumerate(labels):
+        for j, pred_label in enumerate(labels):
+            cm[i, j] = np.sum((y_true == true_label) & (y_hat == pred_label))
+
+    return cm
 
 
 if __name__ == "__main__":
