@@ -110,7 +110,9 @@ class MyLogisticRegression():
             if gradient_update is None:
                 return None
             self.theta = self.theta.astype(np.float64)
-            self.theta -= self.alpha * gradient_update
-            if (i % 10000 == 0):
+            # Update theta using the mean gradient
+            self.theta -= self.alpha * \
+                gradient_update.mean(axis=1, keepdims=True)
+            if i % 10000 == 0:
                 print(i, "th:", self.theta.flatten())
         return self.theta
