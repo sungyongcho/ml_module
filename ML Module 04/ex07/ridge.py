@@ -53,6 +53,7 @@ class MyRidge(MyLinearRegression):
 
         gradient /= m
         gradient[1:] += (self.lambda_ / m) * self.thetas[1:]
+        gradient[0] -= (self.lambda_ / m) * self.thetas[0]
 
         return gradient
 
@@ -60,8 +61,6 @@ class MyRidge(MyLinearRegression):
         m = len(y)  # Number of training examples
         n = x.shape[1]  # Number of features
 
-        # if (x.shape[0] != m) or (self.the.shape[0] != (n + 1)):
-        #     return None
         for i in range(self.max_iter):
             # Use the gradient_ method from MyRidge class
             gradient_update = self.gradient_(x, y)
@@ -69,14 +68,16 @@ class MyRidge(MyLinearRegression):
                 return None
             self.thetas = self.thetas.astype(np.float64)
 
-            # Regularization term
-            regularization_term = (self.lambda_ / m) * self.thetas
+            # Regularization term (excluding intercept term)
+            regularization_term = (self.lambda_ / m) * self.thetas[1:]
 
             # Update thetas with regularization
-            self.thetas -= self.alpha * (gradient_update + regularization_term)
+            self.thetas[1:] -= self.alpha * \
+                (gradient_update[1:] + regularization_term)
 
             if (i % 10000 == 0):
                 print(i, "th:", self.thetas.flatten())
+
         return self.thetas
 
 

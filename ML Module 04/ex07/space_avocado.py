@@ -1,11 +1,6 @@
 import pandas as pd
-import numpy as np
-from data_spliter import data_spliter
-from polynomial_model import add_polynomial_features
-from mylinearregression import MyLinearRegression
-import matplotlib.pyplot as plt
-
 from benchmark_train import benchmark_train
+import matplotlib.pyplot as plt
 
 
 def plot_evaluation_curve(degrees, mse_values):
@@ -33,22 +28,23 @@ def plot_predictions(model, X_test_poly, y_test):
     plt.show()
 
 
-if __name__ == "__main__":
-    df = pd.read_csv("space_avocado.csv")
+# Step 1: Load the dataset
+df = pd.read_csv("space_avocado.csv")
 
-    # Split the dataset into training and test sets
-    X = df[['weight', 'prod_distance', 'time_delivery']]
-    y = df[['target']]
-    # Define the degrees of polynomial to consider
-    degrees = [1, 2, 3, 4]
+# Step 2: Split the dataset into training, cross-validation, and test sets
+X = df[['weight', 'prod_distance', 'time_delivery']]
+y = df['target']
 
-    mse_values, best_model, X_test_poly, y_test =\
-        benchmark_train(X, y, degrees)
 
-    # Plot the evaluation curve
-    plot_evaluation_curve(degrees, mse_values)
+degrees = [1, 2, 3, 4]
 
-    # load the saved
+mse_values, best_model, X_test_poly, y_test = benchmark_train(X, y, degrees)
 
-    # Plot the true price and predicted price using the best model
-    plot_predictions(best_model, X_test_poly, y_test)
+# Plot the evaluation curve
+plot_evaluation_curve(degrees, mse_values)
+
+
+# load the saved
+
+# Plot the true price and predicted price using the best model
+plot_predictions(best_model, X_test_poly, y_test)
