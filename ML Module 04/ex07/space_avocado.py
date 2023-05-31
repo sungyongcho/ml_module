@@ -12,14 +12,15 @@ def plot_evaluation_curve(degrees, mse_values):
 
 
 def plot_predictions(model, X_test_poly, y_test):
+    print(X_test_poly.shape, y_test.shape)
     y_pred = model.predict_(X_test_poly)
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(X_test_poly[:, 1], X_test_poly[:, 2],
-               y_test[:, 0], c='b', label='True Price')
+               y_test, c='b', label='True Price')
     ax.scatter(X_test_poly[:, 1], X_test_poly[:, 2],
-               y_pred[:, 0], c='r', label='Predicted Price')
+               y_pred, c='r', label='Predicted Price')
     ax.set_xlabel('Weight')
     ax.set_ylabel('Production Distance')
     ax.set_zlabel('Price')
@@ -27,7 +28,8 @@ def plot_predictions(model, X_test_poly, y_test):
     plt.title('True Price vs Predicted Price')
     plt.show()
 
-
+    print(X_test_poly.shape, )
+    print(X_test_poly, )
 # Step 1: Load the dataset
 df = pd.read_csv("space_avocado.csv")
 

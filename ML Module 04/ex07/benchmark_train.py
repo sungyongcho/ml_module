@@ -18,8 +18,6 @@ def benchmark_train(x, y, degrees):
     X_train, X_cv, X_test, y_train, y_cv, y_test = data_spliter(
         x.to_numpy(), y.to_numpy(), 0.6, 0.2)
 
-    print(y_train.shape, y_cv.shape, y_test.shape)
-
     mse_values = []
 
     # Apply feature scaling to training, cross-validation, and test sets
@@ -27,10 +25,6 @@ def benchmark_train(x, y, degrees):
         (X_train.max() - X_train.min())
     X_cv_scaled = (X_cv - X_train.min()) / (X_train.max() - X_train.min())
     X_test_scaled = (X_test - X_train.min()) / (X_train.max() - X_train.min())
-
-    print(X_train_scaled.shape)
-    print(X_cv_scaled.shape)
-    print(X_train_scaled.shape[1] == X_cv_scaled.shape[1])
 
     variance = np.var(y_train)
 
@@ -56,7 +50,7 @@ def benchmark_train(x, y, degrees):
         y_cv_pred = lr.predict_(X_cv_poly)
 
         # Evaluate the model on the cross-validation data
-        mse = lr.mse_(y_cv, y_cv_pred)
+        mse = lr.mse_(X_cv_poly, y_cv_pred)
         normalized_mse = mse / variance
 
         mse_values.append(normalized_mse)
