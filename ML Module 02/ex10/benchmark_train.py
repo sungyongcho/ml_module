@@ -47,9 +47,11 @@ def benchmark_train(x, y, degrees):
 
         # Fit the model to the training data
         lr.fit_(X_train_poly, y_train)
+        y_pred = lr.predict_(X_test_poly)
+
 
         # Evaluate the model on the test data
-        mse = evaluate_model(lr, X_test_poly, y_test)
+        mse = lr.mse_(X_test_poly, y_pred)
         mse_values.append(mse)
 
     # Find the best degree with the minimum mean squared error
