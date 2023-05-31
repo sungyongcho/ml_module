@@ -2,6 +2,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class MyLinearRegression():
     """
     Description:
@@ -137,7 +138,7 @@ class MyLinearRegression():
         Raises:
         This function should not raise any Exception.
         """
-        xp = np.hstack((np.ones((x.shape[0], 1)), x))
+        xp = self.add_intercept(x)
         if xp.shape[1] != self.thetas.shape[0]:
             return None
         return xp.dot(self.thetas).reshape(-1, 1)

@@ -14,7 +14,14 @@ def add_polynomial_features(x, power):
     Raises:
     This function should not raise any Exception.
     """
+    if not isinstance(x, np.ndarray) or not isinstance(power, int):
+        return None
+
+    if x.size == 0:
+        return None
+
     res = x
     for i in range(2, power + 1):
         res = np.concatenate((res, x ** i), axis=1)
+
     return res

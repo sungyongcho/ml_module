@@ -5,6 +5,7 @@ from polynomial_model import add_polynomial_features
 from mylinearregression import MyLinearRegression
 import matplotlib.pyplot as plt
 
+
 def evaluate_model(model, X_test_poly, y_test):
     # Make predictions on the test data
     y_pred = model.predict_(X_test_poly)
@@ -14,18 +15,18 @@ def evaluate_model(model, X_test_poly, y_test):
     return mse
 
 
-
 def benchmark_train(x, y, degrees):
-
     '''
     returns mse values
     '''
 
     # Split the dataset into training and test sets
-    X_train, X_test, y_train, y_test = data_spliter(x.to_numpy(), y.to_numpy(), 0.8)
+    X_train, X_test, y_train, y_test = data_spliter(
+        x.to_numpy(), y.to_numpy(), 0.8)
 
     # Apply feature scaling to training and test sets
-    X_train_scaled = (X_train - X_train.min()) / (X_train.max() - X_train.min())
+    X_train_scaled = (X_train - X_train.min()) / \
+        (X_train.max() - X_train.min())
     X_test_scaled = (X_test - X_train.min()) / (X_train.max() - X_train.min())
 
     # Create an empty list to store the mean squared errors
@@ -39,7 +40,8 @@ def benchmark_train(x, y, degrees):
         X_test_poly = add_polynomial_features(X_test_scaled, degree)
 
         # Create an instance of MyLinearRegression
-        num_features = X_train_poly.shape[1] + 1  # Add 1 for the intercept term
+        # Add 1 for the intercept term
+        num_features = X_train_poly.shape[1] + 1
         thetas = np.zeros((num_features, 1))
         lr = MyLinearRegression(thetas, alpha=0.01, max_iter=1000)
 
