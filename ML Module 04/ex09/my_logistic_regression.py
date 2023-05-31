@@ -122,6 +122,6 @@ class MyLogisticRegression():
             # Update theta using the mean gradient
             self.theta -= self.alpha * \
                 gradient_update.mean(axis=1, keepdims=True)
-            if i % 10000 == 0:
-                print(i, "th:", self.theta.flatten())
+            # if i % 10000 == 0:
+            #     print(i, "th:", self.theta.flatten())
         return self.theta

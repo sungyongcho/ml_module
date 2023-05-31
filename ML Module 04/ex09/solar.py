@@ -23,6 +23,11 @@ if __name__ == "__main__":
     merged_data = pd.merge(census_data, planet_data,
                            left_index=True, right_index=True)
 
+    merged_data['Origin'] = merged_data['Origin'].astype(int)
+
+
+    print(merged_data.head(10))
+
     # Define the feature matrix X and target variable y
     X = merged_data.drop('Origin', axis=1).values
     y = merged_data['Origin'].values.astype(int)

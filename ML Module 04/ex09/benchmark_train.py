@@ -15,6 +15,9 @@ def benchmark_train(input_data, input_labels, output_file='models.pickle'):
     X_train, X_cv, X_test, y_train, y_cv, y_test = data_spliter(
         X_poly, input_labels, 0.6, 0.2, fix='y')
 
+    print(X_train.shape, X_cv.shape, X_test.shape)
+    # y_cv = np.reshape(y_cv, (-1,1))
+    # print(y_cv)
     # Train different regularized logistic regression models with a polynomial hypothesis of degree 3
     lambda_values = np.linspace(0, 1, 10)  # Range of lambda values
     models = {}  # Dictionary to store the models and their f1 scores
@@ -31,8 +34,13 @@ def benchmark_train(input_data, input_labels, output_file='models.pickle'):
         model.fit_(X_train_poly, y_train)
 
         # Evaluate the model on the cross-validation set
+        # print(X_cv_poly)
         y_cv_pred = model.predict_(X_cv_poly)
-        f1 = f1_score_(y_cv, y_cv_pred)
+        if (lambda_val <= 0.2):
+            print(lambda_val, y_cv_pred)
+        # with np.printoptions(threshold=np.inf):
+        #     print(y_cv_pred)
+        f1 = f1_score_(y_cv, y_cv_pred, pos_label=2)
 
         # Save the model with its f1 score
         models[lambda_val] = (model, f1)

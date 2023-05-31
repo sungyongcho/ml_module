@@ -43,8 +43,8 @@ def precision_score_(y, y_hat, pos_label=1):
     """
     # Precision = True Positives / (True Positives + False Positives)
 
-    if y.shape != y_hat.shape:
-        return None
+    # if y.shape != y_hat.shape:
+    #     return None
 
     # Count true positives and false positives
     true_positives = np.sum((y_hat == pos_label) & (y == pos_label))
@@ -97,11 +97,13 @@ def f1_score_(y, y_hat, pos_label=1):
 
     # F1 Score = 2 * (Precision * Recall) / (Precision + Recall)
 
+    # print(y.shape, y_hat.shape)
     if y.shape != y_hat.shape:
         if len(y.shape) == 1:
             y = y.reshape(-1, 1)
         if len(y_hat.shape) == 1:
             y_hat = y_hat.reshape(-1, 1)
+    # print(y.shape, y_hat.shape)
 
     precision = precision_score_(y, y_hat, pos_label)
     recall = recall_score_(y, y_hat, pos_label)
