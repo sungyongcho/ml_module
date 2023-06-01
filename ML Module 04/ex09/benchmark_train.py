@@ -7,13 +7,10 @@ from polynomial_model_extended import add_polynomial_features
 from data_spliter import data_spliter
 
 
-def benchmark_train(input_data, input_labels, output_file='models.pickle'):
-    degrees = [0, 1, 2, 3]  # Degrees of polynomial features
+def benchmark_train(input_data, input_labels, degrees, output_file='models.pickle'):
     lambda_values = np.linspace(0, 1, 10)  # Range of lambda values
     models = {}  # Dictionary to store the models
 
-    # print(input_data.shape)  # Print the shape of X
-    # print(input_data)  # Print the content of X
     for degree in degrees:
         # Transform the features into a polynomial of the current degree
         X_poly = add_polynomial_features(input_data, power=3)
@@ -38,18 +35,22 @@ def benchmark_train(input_data, input_labels, output_file='models.pickle'):
             y_cv_binary = (y_cv == degree).astype(int)
             y_cv_pred = model.predict_(X_cv)
             y_cv_pred = y_cv_pred.flatten().astype(int)
-            # print(y_cv)
-            # print(y_cv_pred)
             f1 = f1_score_(y_cv_binary, y_cv_pred)
+            # set nan to 0
+            if np.isnan(f1):
+                f1 = 0
 
             # Save the model with its f1 score
-            models[(degree, lambda_val)] = (model, f1)
+            models[(model, degree, lambda_val)] = f1
 
             # Calculate the F1 score on the test set for the current model
             y_test_binary = (y_test == degree).astype(int)
             y_test_pred = model.predict_(X_test)
             y_test_pred = y_test_pred.flatten().astype(int)
             f1_test = f1_score_(y_test_binary, y_test_pred)
+            # set nan to 0
+            if np.isnan(f1_test):
+                f1_test = 0
             print(
                 f"Degree: {degree}, Lambda: {lambda_val}, F1 Score: {f1}, Test F1 Score: {f1_test}")
 

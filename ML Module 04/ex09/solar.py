@@ -8,9 +8,7 @@ from data_spliter import data_spliter
 import pickle
 from benchmark_train import benchmark_train
 
-
 if __name__ == "__main__":
-
     # Load the datasets
     census_data = pd.read_csv('solar_system_census.csv')
     planet_data = pd.read_csv('solar_system_census_planets.csv')
@@ -25,39 +23,93 @@ if __name__ == "__main__":
 
     merged_data['Origin'] = merged_data['Origin'].astype(int)
 
-
-    print(merged_data.head(10))
-
     # Define the feature matrix X and target variable y
     X = merged_data.drop('Origin', axis=1).values
     y = merged_data['Origin'].values.astype(int)
+    degrees = [0, 1, 2, 3]
 
     # Train the models using benchmark_train
-    models = benchmark_train(X, y)
+    models = benchmark_train(X, y, degrees)
 
-    # Find the model with the best f1 score
-    best_lambda_val, (best_model, _) = max(
-        models.items(), key=lambda x: x[1][1])
+    # Load the trained models
+    with open('models.pickle', 'rb') as f:
+        models = pickle.load(f)
 
-    # Visualize the performance of the different models
-    lambda_values = np.array(list(models.keys()))
-    f1_scores = np.array([score for _, score in models.values()])
+    # Extract the lambda values and corresponding F1 scores for each degree
+    lambda_values = {}
+    f1_scores = {}
 
-    plt.bar(lambda_values, f1_scores)
-    plt.xlabel('Lambda Values')
-    plt.ylabel('F1 Score')
-    plt.title('Performance of Different Models')
+    print(models)
+
+    for degree in degrees:
+        lambda_values[degree] = []
+        f1_scores[degree] = []
+        for key, value in models.items():
+            if key[1] == degree:
+                lambda_values[degree].append(key[2])
+                f1_scores[degree].append(value)
+
+    # Create subplots for each degree
+    fig, axes = plt.subplots(1, len(degrees), figsize=(15, 6))
+
+    # Iterate over degrees
+    for i, degree in enumerate(degrees):
+        axes[i].bar(lambda_values[degree], f1_scores[degree])
+        axes[i].set_xlabel('Lambda')
+        axes[i].set_ylabel('F1 Score')
+        axes[i].set_title(f'Performance of Degree {degree} Models')
+
+    plt.tight_layout()
     plt.show()
+
+    # Get the best degree and lambda value
+    best_model_key = max(models.keys(), key=lambda x: models[x])
+
+    # Get the best model and its F1 score
+    best_model = best_model_key[0]
+    best_degree = best_model_key[1]
+    best_lambda = best_model_key[2]
+    best_f1_score = models[best_model_key]
+
+    # Get the best model and its coefficients
+    coefficients = best_model.theta[1:]
+
+    X_poly = add_polynomial_features(X, power=best_degree)
+
+    X_train, X_test, y_train, y_test = data_spliter(
+        X_poly, y, train_proportion=0.2)
+    print(X_train.shape)
+    print(X_test.shape)
+
+    # Create a binary target variable for the best class
+    binary_target = (y_train == best_degree).astype(int)
+
+    # Create an instance of your logistic regression model with the obtained coefficients
+    model = MyLogisticRegression(
+        theta=np.insert(
+            coefficients, 0, best_model.theta[0]).reshape(-1, 1)[:X_test.shape[1]+1],
+        alpha=0.001,
+        max_iter=1000,
+        lambda_=best_lambda
+    )
+
+    # Train the model on the polynomial feature matrix
+    model.fit_(X_train, binary_target)
+
+    # Predict the target values using the best model
+    print(X_test.shape)
+    print(model.theta.shape)
+    y_pred = model.predict_(X_test)
+    print(y_pred.shape)
 
     # Plot scatter plots
     feature_names = merged_data.drop('Origin', axis=1).columns
 
-    # Your data and feature_names setup
-    # ...
+    # Calculate the number of features and total number of plots
     num_features = len(feature_names)
     total_plots = num_features * (num_features - 1) // 2
 
-    # Create a figure with custom size.
+    # Create a figure with custom size
     plt.figure(figsize=(5 * total_plots, 5))
 
     subplot_idx = 1
@@ -75,6 +127,6 @@ if __name__ == "__main__":
             ax.legend()
             subplot_idx += 1
 
-    # Display all subplots.
+    # Display all subplots
     plt.tight_layout()
     plt.show()

@@ -17,6 +17,8 @@ def add_polynomial_features(x, power):
     # Check if x is an empty array
     if x.size == 0:
         return None
+    if power == 0:
+        return x
 
     polynomial_features = []
     for col in range(1, power + 1):
