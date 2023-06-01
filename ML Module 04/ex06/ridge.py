@@ -24,7 +24,7 @@ class MyRidge(MyLinearRegression):
             self.lambda_ = lambda_
 
     def loss_elem_(self, y, y_hat):
-        return np.dot((y_hat - y).T, (y_hat - y))
+        return np.square(y_hat - y)
 
     def loss_(self, y, y_hat):
         if y.size == 0 or y_hat.size == 0 or self.thetas.size == 0:
@@ -33,9 +33,10 @@ class MyRidge(MyLinearRegression):
         if y.shape != y_hat.shape:
             return None
 
-        loss = self.loss_elem_(y, y_hat)
-        regularization_term = self.lambda_ * \
-            np.dot(self.thetas[1:].T, self.thetas[1:])
+        loss_elements = self.loss_elem_(y, y_hat)
+        loss = np.sum(loss_elements)
+
+        regularization_term = self.lambda_ * np.dot(self.thetas[1:].T, self.thetas[1:])
 
         return float(1 / (2 * len(y)) * (loss + regularization_term))
 

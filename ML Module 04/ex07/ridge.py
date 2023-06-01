@@ -24,7 +24,7 @@ class MyRidge(MyLinearRegression):
             self.lambda_ = lambda_
 
     def loss_elem_(self, y, y_hat):
-        return np.dot((y_hat - y).T, (y_hat - y))
+        return np.square(y_hat - y)
 
     def loss_(self, y, y_hat):
         if y.size == 0 or y_hat.size == 0 or self.thetas.size == 0:
@@ -33,9 +33,10 @@ class MyRidge(MyLinearRegression):
         if y.shape != y_hat.shape:
             return None
 
-        loss = self.loss_elem_(y, y_hat)
-        regularization_term = self.lambda_ * \
-            np.dot(self.thetas[1:].T, self.thetas[1:])
+        loss_elements = self.loss_elem_(y, y_hat)
+        loss = np.sum(loss_elements)
+
+        regularization_term = self.lambda_ * np.dot(self.thetas[1:].T, self.thetas[1:])
 
         return float(1 / (2 * len(y)) * (loss + regularization_term))
 
@@ -53,7 +54,6 @@ class MyRidge(MyLinearRegression):
 
         gradient /= m
         gradient[1:] += (self.lambda_ / m) * self.thetas[1:]
-        gradient[0] -= (self.lambda_ / m) * self.thetas[0]
 
         return gradient
 
@@ -61,6 +61,8 @@ class MyRidge(MyLinearRegression):
         m = len(y)  # Number of training examples
         n = x.shape[1]  # Number of features
 
+        # if (x.shape[0] != m) or (self.the.shape[0] != (n + 1)):
+        #     return None
         for i in range(self.max_iter):
             # Use the gradient_ method from MyRidge class
             gradient_update = self.gradient_(x, y)
@@ -68,17 +70,16 @@ class MyRidge(MyLinearRegression):
                 return None
             self.thetas = self.thetas.astype(np.float64)
 
-            # Regularization term (excluding intercept term)
-            regularization_term = (self.lambda_ / m) * self.thetas[1:]
+            # Regularization term
+            regularization_term = (self.lambda_ / m) * self.thetas
 
             # Update thetas with regularization
-            self.thetas[1:] -= self.alpha * \
-                (gradient_update[1:] + regularization_term)
+            self.thetas -= self.alpha * (gradient_update + regularization_term)
 
             if (i % 10000 == 0):
                 print(i, "th:", self.thetas.flatten())
-
         return self.thetas
+
 
 
 if __name__ == "__main__":
