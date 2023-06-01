@@ -6,99 +6,121 @@ from other_metrics import f1_score_
 from polynomial_model_extended import add_polynomial_features
 from data_spliter import data_spliter
 import pickle
+from benchmark_train import benchmark_train
+
+if __name__ == "__main__":
+    # Load the datasets
+    census_data = pd.read_csv('solar_system_census.csv')
+    planet_data = pd.read_csv('solar_system_census_planets.csv')
+
+    # Drop the "Unnamed: 0" column from census_data and planet_data
+    census_data.drop("Unnamed: 0", axis=1, inplace=True)
+    planet_data.drop("Unnamed: 0", axis=1, inplace=True)
+
+    # Merge the datasets based on the index column
+    merged_data = pd.merge(census_data, planet_data,
+                           left_index=True, right_index=True)
+
+    merged_data['Origin'] = merged_data['Origin'].astype(int)
+
+    # Define the feature matrix X and target variable y
+    X = merged_data.drop('Origin', axis=1).values
+    y = merged_data['Origin'].values.astype(int)
+    degrees = [0, 1, 2, 3]
+
+    # Train the models using benchmark_train
+    models = benchmark_train(X, y, degrees)
+
+    # Load the trained models
+    with open('models.pickle', 'rb') as f:
+        models = pickle.load(f)
+
+    # Extract the lambda values and corresponding F1 scores for each degree
+    lambda_values = {}
+    f1_scores = {}
 
 
-# Load the datasets
-census_data = pd.read_csv('solar_system_census.csv')
-planet_data = pd.read_csv('solar_system_census_planets.csv')
+    for degree in degrees:
+        lambda_values[degree] = []
+        f1_scores[degree] = []
+        for key, value in models.items():
+            if key[1] == degree:
+                lambda_values[degree].append(key[2])
+                f1_scores[degree].append(value)
 
-# Drop the "Unnamed: 0" column from census_data and planet_data
-census_data.drop("Unnamed: 0", axis=1, inplace=True)
-planet_data.drop("Unnamed: 0", axis=1, inplace=True)
+    # Create subplots for each degree
+    fig, axes = plt.subplots(1, len(degrees), figsize=(15, 6))
 
-# Merge the datasets based on the index column
-merged_data = pd.merge(census_data, planet_data,
-                       left_index=True, right_index=True)
+    # Iterate over degrees
+    for i, degree in enumerate(degrees):
+        axes[i].bar(lambda_values[degree], f1_scores[degree])
+        axes[i].set_xlabel('Lambda')
+        axes[i].set_ylabel('F1 Score')
+        axes[i].set_title(f'Performance of Degree {degree} Models')
 
-# Define the feature matrix X and target variable y
-X = merged_data.drop('Origin', axis=1).values
-y = merged_data['Origin'].values.astype(int)
+    plt.tight_layout()
+    plt.show()
 
-# Transform the features into a polynomial of degree 3
-X_poly = add_polynomial_features(X, power=3)
+    # Get the best degree and lambda value
+    best_model_key = max(models.keys(), key=lambda x: models[x])
 
-# Split the dataset into a training, cross-validation, and test set
-X_train, X_cv, X_test, y_train, y_cv, y_test = data_spliter(
-    X, y, 0.6, 0.2, fix='y')
-# y_train, y_cv, y_test = np.split(y, [int(0.6 * len(y)), int(0.8 * len(y))])
+    # Get the best model and its F1 score
+    best_model = best_model_key[0]
+    best_degree = best_model_key[1]
+    best_lambda = best_model_key[2]
+    best_f1_score = models[best_model_key]
 
-# Train different regularized logistic regression models with a polynomial hypothesis of degree 3
-lambda_values = np.linspace(0, 1, 10)  # Range of lambda values
-models = {}  # Dictionary to store the models and their f1 scores
+    # Get the best model and its coefficients
+    coefficients = best_model.theta[1:]
 
-for lambda_val in lambda_values:
-    X_train_poly = add_polynomial_features(X_train, power=3)
-    X_cv_poly = add_polynomial_features(X_cv, power=3)
+    X_poly = add_polynomial_features(X, power=best_degree)
 
-    # Create an instance of your logistic regression model with regularization parameter lambda_val
-    model = MyLogisticRegression(theta=np.random.rand(X_train_poly.shape[1] + 1, 1),
-                                 alpha=0.001, max_iter=1000, lambda_=lambda_val)
+    X_train, X_test, y_train, y_test = data_spliter(
+        X_poly, y, train_proportion=0.2)
 
-    # Train the model on the training set
-    model.fit_(X_train_poly, y_train)
+    # Create a binary target variable for the best class
+    binary_target = (y_train == best_degree).astype(int)
 
-    # Evaluate the model on the cross-validation set
-    y_cv_pred = model.predict_(X_cv_poly)
-    f1 = f1_score_(y_cv, y_cv_pred)
+    # Create an instance of your logistic regression model with the obtained coefficients
+    model = MyLogisticRegression(
+        theta=np.insert(
+            coefficients, 0, best_model.theta[0]).reshape(-1, 1)[:X_test.shape[1]+1],
+        alpha=0.001,
+        max_iter=1000,
+        lambda_=best_lambda
+    )
 
-    # Save the model with its f1 score
-    models[lambda_val] = (model, f1)
+    # Train the model on the polynomial feature matrix
+    model.fit_(X_train, binary_target)
 
-    # Calculate the F1 score on the test set for the current model
-    X_test_poly = add_polynomial_features(X_test, power=3)
-    y_test_pred = model.predict_(X_test_poly)
-    f1_test = f1_score_(y_test, y_test_pred)
-    print(f"Lambda: {lambda_val}, F1 Score: {f1}, Test F1 Score: {f1_test}")
+    # Predict the target values using the best model
+    y_pred = model.predict_(X_test)
 
-# Find the model with the best f1 score
-best_lambda_val, (best_model, _) = max(models.items(), key=lambda x: x[1][1])
+    # Plot scatter plots
+    feature_names = merged_data.drop('Origin', axis=1).columns
 
-# Visualize the performance of the different models
-lambda_values = np.array(list(models.keys()))
-f1_scores = np.array([score for _, score in models.values()])
+    # Calculate the number of features and total number of plots
+    num_features = len(feature_names)
+    total_plots = num_features * (num_features - 1) // 2
 
-plt.bar(lambda_values, f1_scores)
-plt.xlabel('Lambda Values')
-plt.ylabel('F1 Score')
-plt.title('Performance of Different Models')
-plt.show()
+    # Create a figure with custom size
+    plt.figure(figsize=(5 * total_plots, 5))
 
-# Plot scatter plots
-feature_names = merged_data.drop('Origin', axis=1).columns
+    subplot_idx = 1
+    for i in range(num_features - 1):
+        for j in range(i + 1, num_features):
+            ax = plt.subplot(1, total_plots, subplot_idx)
 
-# Your data and feature_names setup
-# ...
-num_features = len(feature_names)
-total_plots = num_features * (num_features - 1) // 2
+            for class_label in np.unique(y):
+                class_data = merged_data[merged_data['Origin'] == class_label]
+                ax.scatter(class_data[feature_names[i]],
+                           class_data[feature_names[j]], label=f"Class {class_label}")
 
-# Create a figure with custom size.
-plt.figure(figsize=(5 * total_plots, 5))
+            ax.set_xlabel(feature_names[i])
+            ax.set_ylabel(feature_names[j])
+            ax.legend()
+            subplot_idx += 1
 
-subplot_idx = 1
-for i in range(num_features - 1):
-    for j in range(i + 1, num_features):
-        ax = plt.subplot(1, total_plots, subplot_idx)
-
-        for class_label in np.unique(y):
-            class_data = merged_data[merged_data['Origin'] == class_label]
-            ax.scatter(class_data[feature_names[i]],
-                       class_data[feature_names[j]], label=f"Class {class_label}")
-
-        ax.set_xlabel(feature_names[i])
-        ax.set_ylabel(feature_names[j])
-        ax.legend()
-        subplot_idx += 1
-
-# Display all subplots.
-plt.tight_layout()
-plt.show()
+    # Display all subplots
+    plt.tight_layout()
+    plt.show()

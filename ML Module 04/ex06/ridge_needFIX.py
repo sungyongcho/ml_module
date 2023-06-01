@@ -92,6 +92,7 @@ if __name__ == "__main__":
     print(y_hat)
 
     # Example 1:
+    # needs to fix
     print(mylr.loss_elem_(Y, y_hat))  # Output: array([[225.], [0.], [11025.]])
 
     # Example 2:
