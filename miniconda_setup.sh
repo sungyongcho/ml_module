@@ -30,7 +30,7 @@ source ~/.zshrc
 
 
 if [[ "$USER" == "sucho" ]]; then
-	conda create --name 42AI-$USER python=3.7 jupyter pandas pycodestyle numpy scikit-learn matplotlib -y
+	conda create --name 42AI-$USER python=3.7 jupyter pandas pycodestyle numpy scikit-learn matplotlib networkx -y
 else
-	conda create --name 42AI-sucho python=3.7 jupyter pandas pycodestyle numpy scikit-learn matplotlib -y
+	conda create --name 42AI-sucho python=3.7 jupyter pandas pycodestyle numpy scikit-learn matplotlib networkx -y
 fi
