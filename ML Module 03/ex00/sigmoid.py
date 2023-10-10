@@ -14,7 +14,7 @@ def sigmoid_(x):
     This function should not raise any Exception.
     """
 
-    return (1 / (1 + math.e ** (-x)))
+    return 1 / (1 + math.e ** (-x))
 
 
 if __name__ == "__main__":

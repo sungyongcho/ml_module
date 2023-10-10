@@ -11,8 +11,8 @@ fi
 
 if [[ "$(uname)" == "Darwin" ]]; then
 	# For MAC
-	curl -LO "https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
-	sh Miniconda3-latest-MacOSX-x86_64.sh -b -p $MYPATH
+	curl -LO "https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh"
+	sh Miniconda3-latest-MacOSX-arm64.sh -b -p $MYPATH
 elif [[ "$(uname)" == "Linux" ]]; then
 	curl -LO "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
 	sh Miniconda3-latest-Linux-x86_64.sh -b -p $MYPATH
@@ -30,7 +30,7 @@ source ~/.zshrc
 
 
 if [[ "$USER" == "sucho" ]]; then
-	conda create --name 42AI-$USER python=3.7 jupyter pandas pycodestyle numpy scikit-learn matplotlib networkx -y
+	conda create --name 42AI-$USER python=3.11 jupyter pandas pycodestyle numpy scikit-learn matplotlib networkx black isort -y
 else
-	conda create --name 42AI-sucho python=3.7 jupyter pandas pycodestyle numpy scikit-learn matplotlib networkx -y
+	conda create --name 42AI-sucho python=3.11 jupyter pandas pycodestyle numpy scikit-learn matplotlib networkx black isort -y
 fi

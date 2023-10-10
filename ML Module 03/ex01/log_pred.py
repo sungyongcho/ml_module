@@ -19,17 +19,19 @@ def logistic_predict_(x, theta):
     # Add a column of ones to X as the first column
     x_prime = np.concatenate((np.ones((m, 1)), x), axis=1)
 
-    return (1 / (1 + math.e ** (-np.dot(x_prime, theta))))
+    return 1 / (1 + math.e ** (-np.dot(x_prime, theta)))
 
 
 if __name__ == "__main__":
     # Example 1
     x = np.array([4]).reshape((-1, 1))
     theta = np.array([[2], [0.5]])
+
     print(logistic_predict_(x, theta))
     # # Output:
     # array([[0.98201379]])
     # Example 1
+
     x2 = np.array([[4], [7.16], [3.2], [9.37], [0.56]])
     theta2 = np.array([[2], [0.5]])
     print(logistic_predict_(x2, theta2))
