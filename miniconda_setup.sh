@@ -30,7 +30,9 @@ source ~/.zshrc
 
 
 if [[ "$USER" == "sucho" ]]; then
-	conda create --name 42AI-$USER python=3.11 jupyter pandas pycodestyle numpy scikit-learn matplotlib networkx black isort -y
+	conda create --name 42AI-$USER python=3.11 jupyter pandas pycodestyle numpy scikit-learn matplotlib networkx isort -y
+	conda run -n 42AI-$USER pip install black pygame
 else
 	conda create --name 42AI-sucho python=3.11 jupyter pandas pycodestyle numpy scikit-learn matplotlib networkx black isort -y
+	conda run -n 42AI-sucho pip install black pygame
 fi

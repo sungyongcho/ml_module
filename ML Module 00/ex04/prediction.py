@@ -49,6 +49,7 @@ if __name__ == "__main__":
     # # Output:
     # array([[ 8.], [11.], [14.], [17.], [20.]])
     # Example 4:
+
     theta4 = np.array([[-3], [1]])
     print(predict_(x, theta4))
     # # Output:
